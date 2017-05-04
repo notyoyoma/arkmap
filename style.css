@@ -2,9 +2,20 @@ body {
   background:#222;
   padding:0;
   margin:0;
+  font-family: 'Roboto Condensed', sans-serif;
 }
 #map {
   height: 100vh;
   width: 100vw;
   background: #848fe1;
+}
+#coords {
+  position: absolute;
+  right: 0%;
+  bottom: 0%;
+  display: inline-block;
+  padding: 5px;
+  background: rgba(0,0,0,0.5);
+  color:#eee;
+  margin: 0;
 }
