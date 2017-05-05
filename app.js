@@ -26,7 +26,8 @@ L.CRS.Direct = L.Util.extend({}, L.CRS, {
 });
 
 var coordBox = $(coords),
-    mapUrl = 'https://s3.amazonaws.com/arkmaptiles/{z}/{x}/{y}.png';
+    mapUrl = 'https://s3.amazonaws.com/arkmaptiles/{z}/{x}/{y}.png',
+    markers = [];
 
 var mapLayer = L.tileLayer(mapUrl, {
       minZoom: 1,
@@ -47,13 +48,19 @@ var map = L.map('map',{
       zoomDelta: 0.01,
     }).setView([0.5,0.5],1);
 
+if (location.hash) {
+  var hash = location.hash.replace("#",'');
+  var coords = hash.split(';');
+  for (var i=0; i<coords.length; i++) {
+    addMarker(L.latLng(coords[i].split(',')));
+  }
+}
 
 map.on('mousemove', function(e) {
   coordBox.text(getPrettyLatLng(e.latlng));
 });
 
-var markers = [];
-var markerPopup = function(marker){
+function markerPopup(marker){
   var tmpl = $('<span>'+getPrettyLatLng(marker._latlng)+'<i class="fa fa-trash" aria-hidden="true"></i></span>')
   tmpl.find('i').click(function(){
     map.removeLayer(marker);
@@ -61,7 +68,7 @@ var markerPopup = function(marker){
   return tmpl[0];
 };
 var updateURL = function(){
-  var hash = "#"+ markers.map(function(m){return getPrettyLatLng(m._latlng);}).join(';');
+  var hash = "#"+ markers.map(function(m){return getUglyLatLng(m._latlng);}).join(';');
   if(history.pushState) {
     history.pushState(null, null, hash);
   }
@@ -69,7 +76,7 @@ var updateURL = function(){
     location.hash = hash;
   }
 };
-var addMarker = function(latlng){
+function addMarker(latlng){
   var marker = L.marker([latlng.lat, latlng.lng],{
     draggable: true,
     title: getPrettyLatLng(latlng)
@@ -87,13 +94,3 @@ map.on('click', function(e){
   addMarker(e.latlng);
   updateURL();
 });
-
-if (location.hash) {
-  setTimeout(function(){
-    var hash = location.hash.replace("#",'');
-    var coords = hash.split(';');
-    for (var i=0; i<coords.length; i++) {
-      addMarker(L.latLng(coords[i].split(',')));
-    }
-  }, 1000);
-}
