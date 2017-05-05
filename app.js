@@ -32,7 +32,7 @@ var map = L.map('map',{
       attributionControl: false,
       zoomSnap: 0,
       zoomDelta: 0.01,
-    }).setView([0,0],0);
+    }).setView([0.5,0.5],1);
 
 function getLatLng(latlng){
   //                latitude 7.2 - 92.8        longitude 7.2 - 92.8
@@ -45,8 +45,48 @@ map.on('mousemove', function(e) {
   coordBox.text(getLatLng(e.latlng));
 });
 
+var markers = [];
+var markerPopup = function(marker){
+  var tmpl = $('<span>'+getLatLng(marker._latlng)+'<i class="fa fa-trash" aria-hidden="true"></i></span>')
+  tmpl.find('i').click(function(){
+    map.removeLayer(marker);
+  });
+  return tmpl[0];
+};
+var updateURL = function(){
+  var hash = "#"+ markers.map(function(m){return getLatLng(m._latlng);}).join(';');
+  if(history.pushState) {
+    history.pushState(null, null, hash);
+  }
+  else {
+    location.hash = hash;
+  }
+};
+var addMarker = function(latlng){
+  var marker = L.marker([latlng.lat, latlng.lng],{
+    draggable: true,
+    title: getLatLng(latlng)
+  });
+  markers.push(marker);
+  marker.addTo(map);
+  marker.bindPopup(markerPopup(marker));
+  marker.on('dragend', function(e){
+    marker.setPopupContent(markerPopup(marker));
+    updateURL();
+  });
+};
+
 map.on('click', function(e){
-  L.marker([e.latlng.lat, e.latlng.lng],{
-		title: getLatLng(e.latlng)
-  }).addTo(map);
+  addMarker(e.latlng);
+  updateURL();
 });
+
+if (location.hash) {
+  setTimeout(function(){
+    var hash = location.hash.replace("#",'');
+    var coords = hash.split(';');
+    for (var i=0; i<coords.length; i++) {
+      addMarker(L.latLng(coords[i].split(',')));
+    }
+  }, 1000);
+}
