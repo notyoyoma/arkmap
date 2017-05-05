@@ -19,8 +19,15 @@ body {
   color:#eee;
   margin: 0;
 }
-i.fa-trash {
+i.material-icons {
   cursor: pointer;
-  margin-left: 0.5em;
+  margin: 0 10px;
   color: #933;
+  font-size: 17.6px;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 0.8;
+}
+.leaflet-popup-content {
+  white-space:nowrap;
 }
