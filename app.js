@@ -1,3 +1,16 @@
+function roundToOneDecimal(num) {
+  return Number(Math.round(num+'e1')+'e-1');
+}
+function getPrettyLatLng(latlng){
+  //                latitude 7.2 - 92.8        longitude 7.2 - 92.8
+  var lat = roundToOneDecimal(latlng.lat * 83 + 8.8);
+      lng = roundToOneDecimal(latlng.lng * 83 + 8.3);
+	return lat + ',' + lng;
+};
+function getUglyLatLng(latlng){
+	return latlng.lat + ',' + latlng.lng;
+};
+
 L.Projection.NoWrap = {
   project: function (latlng) {
     return new L.Point(latlng.lng, latlng.lat);
@@ -34,27 +47,21 @@ var map = L.map('map',{
       zoomDelta: 0.01,
     }).setView([0.5,0.5],1);
 
-function getLatLng(latlng){
-  //                latitude 7.2 - 92.8        longitude 7.2 - 92.8
-  var lat = Number(Math.round(latlng.lat * 83 + 8.8+'e1')+'e-1'),
-      lng = Number(Math.round(latlng.lng * 83 + 8.3+'e1')+'e-1');
-	return lat + ',' + lng;
-};
 
 map.on('mousemove', function(e) {
-  coordBox.text(getLatLng(e.latlng));
+  coordBox.text(getPrettyLatLng(e.latlng));
 });
 
 var markers = [];
 var markerPopup = function(marker){
-  var tmpl = $('<span>'+getLatLng(marker._latlng)+'<i class="fa fa-trash" aria-hidden="true"></i></span>')
+  var tmpl = $('<span>'+getPrettyLatLng(marker._latlng)+'<i class="fa fa-trash" aria-hidden="true"></i></span>')
   tmpl.find('i').click(function(){
     map.removeLayer(marker);
   });
   return tmpl[0];
 };
 var updateURL = function(){
-  var hash = "#"+ markers.map(function(m){return getLatLng(m._latlng);}).join(';');
+  var hash = "#"+ markers.map(function(m){return getPrettyLatLng(m._latlng);}).join(';');
   if(history.pushState) {
     history.pushState(null, null, hash);
   }
@@ -65,7 +72,7 @@ var updateURL = function(){
 var addMarker = function(latlng){
   var marker = L.marker([latlng.lat, latlng.lng],{
     draggable: true,
-    title: getLatLng(latlng)
+    title: getPrettyLatLng(latlng)
   });
   markers.push(marker);
   marker.addTo(map);
