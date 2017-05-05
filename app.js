@@ -61,13 +61,11 @@ map.on('mousemove', function(e) {
 });
 
 function markerPopup(marker){
-  var tmpl = $('<span>'+getPrettyLatLng(marker._latlng)+'<i class="fa fa-trash" aria-hidden="true"></i></span>')
-  tmpl.find('i').click(function(){
-    map.removeLayer(marker);
-  });
+  var trashcan = $('<i class="fa fa-trash" aria-hidden="true"></i>').click(removeMarker.bind(null, marker));
+  var tmpl = $('<span>'+getPrettyLatLng(marker._latlng)+'</span>').append(trashcan);
   return tmpl[0];
 };
-var updateURL = function(){
+function updateURL(){
   var hash = "#"+ markers.map(function(m){return getUglyLatLng(m._latlng);}).join(';');
   if(history.pushState) {
     history.pushState(null, null, hash);
@@ -89,8 +87,19 @@ function addMarker(latlng){
     updateURL();
   });
 };
+function removeMarker(marker){
+  map.removeLayer(marker);
+  for (var i = 0; i < markers.length; i++) {
+    if (markers[i]._leaflet_id == marker._leaflet_id) {
+      markers.splice(i, 1);
+      break;
+    }
+  }
+  updateURL();
+}
 
 map.on('click', function(e){
   addMarker(e.latlng);
   updateURL();
 });
+//map.on('layerremove', updateURL);
