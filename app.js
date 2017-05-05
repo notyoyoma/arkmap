@@ -25,7 +25,7 @@ L.CRS.Direct = L.Util.extend({}, L.CRS, {
   transformation: new L.Transformation(1, 0, 1, 0)
 });
 
-var coordBox = $(coords),
+var coordBox = $('#coords'),
     mapUrl = 'https://s3.amazonaws.com/arkmaptiles/{z}/{x}/{y}.png',
     markers = [];
 
