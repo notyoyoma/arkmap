@@ -61,7 +61,7 @@ map.on('mousemove', function(e) {
 });
 
 function markerPopup(marker){
-  var trashcan = $('<i class="material-icons">delete</i>').click(removeMarker.bind(null, marker));
+  var trashcan = $('<i class="icon-bin"></i>').click(removeMarker.bind(null, marker));
   var tmpl = $('<span>'+getPrettyLatLng(marker._latlng)+'</span>').append(trashcan);
   return tmpl[0];
 };
@@ -102,4 +102,3 @@ map.on('click', function(e){
   addMarker(e.latlng);
   updateURL();
 });
-//map.on('layerremove', updateURL);
