@@ -26,7 +26,7 @@ L.CRS.Direct = L.Util.extend({}, L.CRS, {
 });
 
 var coordBox = $('#coords'),
-    mapUrl = 'https://s3.amazonaws.com/arkmaptiles/{z}/{x}/{y}.png',
+    mapUrl = '/tiles/{z}/{x}/{y}.png',
     markers = [];
 
 var mapLayer = L.tileLayer(mapUrl, {
